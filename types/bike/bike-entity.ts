@@ -15,3 +15,10 @@ export interface SimpleBikeEntity {
     status: string;
     comments: string;
 }
+
+export interface MessageEntity {
+    id: string;
+    text: string;
+    isClientAs: number;
+    isNew: number;
+}

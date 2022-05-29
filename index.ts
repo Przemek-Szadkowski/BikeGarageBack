@@ -18,6 +18,12 @@ app.get('/bike/:orderNo', async (req, res) => {
     res.json(bike);
 })
 
+app.get('/search/:id', async (req, res) => {
+    const messages = await BikeRecord.getMessagesByOrderNo(req.params.id);
+    res.json(messages);
+    console.log(messages);
+})
+
 app.use(handleError);
 
 app.listen(3001, '0.0.0.0', () => {

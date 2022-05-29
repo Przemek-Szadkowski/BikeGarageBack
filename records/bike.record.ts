@@ -1,4 +1,4 @@
-import {NewBikeEntity, SimpleBikeEntity} from "../types";
+import {MessageEntity, NewBikeEntity, SimpleBikeEntity} from "../types";
 import {pool} from "../utils/db";
 import {FieldPacket} from "mysql2";
 import {ValidationError} from "../utils/errors";
@@ -90,5 +90,14 @@ export class BikeRecord implements SimpleBikeEntity {
         }) as BikeRecordResults;
 
         return results.length === 0 ? null : new BikeRecord(results[0]);
+    }
+
+    static async getMessagesByOrderNo(id: string): Promise<any | null> {
+        const [results] = await pool.execute(
+            "SELECT `messages`.`text`, `messages`.`isClientAsk`, `messages`.`isNew` FROM `messages` JOIN `bikes_messages` ON `messages`.`id` = `bikes_messages`.`msgId` JOIN `bikes` ON `bikes_messages`.`bikeId` = `bikes`.`id` WHERE `bikes_messages`.`bikeId` = :id", {
+            id,
+        });
+
+        return results;
     }
 }
