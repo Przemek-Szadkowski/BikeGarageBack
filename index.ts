@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'express-async-errors';
 import {handleError} from "./utils/errors";
 import {BikeRecord} from "./records/bike.record";
+import {MessageRecord} from "./records/message.record";
 
 const app = express();
 
@@ -16,13 +17,7 @@ app.use(json());
 app.get('/bike/:orderNo', async (req, res) => {
     const bike = await BikeRecord.getOneByOrderNo(req.params.orderNo);
     res.json(bike);
-})
-
-app.get('/search/:id', async (req, res) => {
-    const messages = await BikeRecord.getMessagesByOrderNo(req.params.id);
-    res.json(messages);
-    console.log(messages);
-})
+});
 
 app.use(handleError);
 

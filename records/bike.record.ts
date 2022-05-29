@@ -3,6 +3,7 @@ import {pool} from "../utils/db";
 import {FieldPacket} from "mysql2";
 import {ValidationError} from "../utils/errors";
 import {decimalDownPaymentExpression} from "../utils/regex-expressions";
+import {MessageRecord} from "./message.record";
 
 type BikeRecordResults = [SimpleBikeEntity[], FieldPacket[]];
 
@@ -18,6 +19,7 @@ export class BikeRecord implements SimpleBikeEntity {
     public downPayment: number;
     public status: string;
     public comments: string;
+    public chat: object;
 
     constructor(obj: NewBikeEntity) {
         // in this garage order number has 11 characters
@@ -62,7 +64,6 @@ export class BikeRecord implements SimpleBikeEntity {
             throw new ValidationError('Komentarz może mieć maksymalnie 65,535 znaków');
         }
 
-
         this.id = obj.id;
         this.orderNo = obj.orderNo;
         this.name = obj.name;
@@ -74,6 +75,7 @@ export class BikeRecord implements SimpleBikeEntity {
         this.downPayment = obj.downPayment;
         this.status = obj.status;
         this.comments = obj.comments;
+        this.chat = obj.chat;
     }
 
     static async getOne(id: string): Promise<BikeRecord | null> {
@@ -89,15 +91,12 @@ export class BikeRecord implements SimpleBikeEntity {
             orderNo,
         }) as BikeRecordResults;
 
-        return results.length === 0 ? null : new BikeRecord(results[0]);
-    }
+        const messages = await MessageRecord.getMessagesByOrderNo(results[0].id);
+        console.log(messages);
 
-    static async getMessagesByOrderNo(id: string): Promise<any | null> {
-        const [results] = await pool.execute(
-            "SELECT `messages`.`text`, `messages`.`isClientAsk`, `messages`.`isNew` FROM `messages` JOIN `bikes_messages` ON `messages`.`id` = `bikes_messages`.`msgId` JOIN `bikes` ON `bikes_messages`.`bikeId` = `bikes`.`id` WHERE `bikes_messages`.`bikeId` = :id", {
-            id,
+        return results.length === 0 ? null : new BikeRecord({
+            ...results[0],
+            chat: messages,
         });
-
-        return results;
     }
 }
