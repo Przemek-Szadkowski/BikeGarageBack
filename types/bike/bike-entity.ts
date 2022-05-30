@@ -1,3 +1,5 @@
+import {MessageEntity} from "../message";
+
 export interface NewBikeEntity extends Omit<SimpleBikeEntity, 'id'> {
     id?: string;
 }
@@ -14,5 +16,5 @@ export interface SimpleBikeEntity {
     downPayment: number;
     status: string;
     comments: string;
-    chat: object;
+    chat: MessageEntity[];
 }

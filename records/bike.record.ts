@@ -19,7 +19,7 @@ export class BikeRecord implements SimpleBikeEntity {
     public downPayment: number;
     public status: string;
     public comments: string;
-    public chat: object;
+    public chat: MessageEntity[];
 
     constructor(obj: NewBikeEntity) {
         // in this garage order number has 11 characters
@@ -92,7 +92,6 @@ export class BikeRecord implements SimpleBikeEntity {
         }) as BikeRecordResults;
 
         const messages = await MessageRecord.getMessagesByOrderNo(results[0].id);
-        console.log(messages);
 
         return results.length === 0 ? null : new BikeRecord({
             ...results[0],
