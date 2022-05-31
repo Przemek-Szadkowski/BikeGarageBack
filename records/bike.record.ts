@@ -87,15 +87,20 @@ export class BikeRecord implements SimpleBikeEntity {
     }
 
     static async getOneByOrderNo(orderNo: string): Promise<BikeRecord | null> {
-        const [results] = await pool.execute("SELECT * FROM `bikes` WHERE orderNo = :orderNo", {
-            orderNo,
-        }) as BikeRecordResults;
+        try {
+            const [results] = await pool.execute("SELECT * FROM `bikes` WHERE orderNo = :orderNo", {
+                orderNo,
+            }) as BikeRecordResults;
 
-        const messages = await MessageRecord.getMessagesByOrderNo(results[0].id);
+            const messages = await MessageRecord.getMessagesById(results[0].id);
 
-        return results.length === 0 ? null : new BikeRecord({
-            ...results[0],
-            chat: messages,
-        });
+            return results.length === 0 ? null : new BikeRecord({
+                ...results[0],
+                chat: messages,
+            });
+        } catch {
+            throw new ValidationError('Nie istnieje zlecenie o podanym numerze');
+        }
+
     }
 }
