@@ -31,7 +31,7 @@ export class MessageRecord implements MessageEntity {
 
     static async getMessagesByOrderNo(id: string): Promise<MessageEntity[] | null> {
         const [results] = await pool.execute(
-            "SELECT `messages`.`text`, `messages`.`isClientAsk`, `messages`.`isNew` FROM `messages` JOIN `bikes_messages` ON `messages`.`id` = `bikes_messages`.`msgId` JOIN `bikes` ON `bikes_messages`.`bikeId` = `bikes`.`id` WHERE `bikes_messages`.`bikeId` = :id", {
+            "SELECT `messages`.`id`, `messages`.`text`, `messages`.`isClientAsk`, `messages`.`isNew` FROM `messages` JOIN `bikes_messages` ON `messages`.`id` = `bikes_messages`.`msgId` JOIN `bikes` ON `bikes_messages`.`bikeId` = `bikes`.`id` WHERE `bikes_messages`.`bikeId` = :id", {
                 id,
             }) as MessageRecordResults;
 
