@@ -89,11 +89,12 @@ export class BikeRecord implements SimpleBikeEntity {
     static async getAllBikes(): Promise<BikeRecord[]> {
         const [results] = (await pool.execute("SELECT * FROM `bikes` ORDER BY `dateOfReception` DESC")) as BikeRecordResults;
 
-        for (const result of results) {
+        for await (const result of results) {
             result.chat = await MessageRecord.getMessagesById(result.id);
         }
 
-        return results.map(obj => new BikeRecord(obj));
+        return results.map(result => new BikeRecord(result));
+
     };
 
     static async getOneByOrderNo(orderNo: string): Promise<BikeRecord | null> {

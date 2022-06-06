@@ -35,12 +35,12 @@ export class MessageRecord implements MessageEntity {
                 id,
             }) as MessageRecordResults;
 
-
         const messages: MessageEntity[] = [];
 
         if(results.length !== 0) {
             results.forEach(result => messages.push(new MessageRecord(result)));
         }
+
 
         return results.length === 0 ? null : messages;
     }

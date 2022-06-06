@@ -10,7 +10,8 @@ export const bikeRouter = Router()
     })
 
     .post('/:orderNo', async (req: Request, res: Response) => {
-        const bike = await BikeRecord.getOneByOrderNo(req.body.orderNo);
+        const bike = await BikeRecord.getOneByOrderNo(req.params.orderNo);
+
 
         const newMessage = new MessageRecord({
             text: req.body.textAreaVal,
