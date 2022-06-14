@@ -1,6 +1,7 @@
 import {MessageEntity, NewBikeEntity, SimpleBikeEntity} from "../types";
 import {pool} from "../utils/db";
 import {FieldPacket} from "mysql2";
+import {v4 as uuid} from "uuid";
 import {ValidationError} from "../utils/errors";
 import {decimalDownPaymentExpression} from "../utils/regex-expressions";
 import {MessageRecord} from "./message.record";
@@ -18,13 +19,12 @@ export class BikeRecord implements SimpleBikeEntity {
     public phoneNo: string;
     public downPayment: number;
     public status: string;
-    public comments: string;
+    public comments: string = '';
     public chat: MessageEntity[];
 
     constructor(obj: NewBikeEntity) {
-        // in this garage order number has 11 characters
-        if (!obj.orderNo || obj.orderNo.length > 11) {
-            throw new ValidationError('Numer zlecenia musi mieć 11 znaków!');
+        if (!obj.orderNo || obj.orderNo.length > 16) {
+            throw new ValidationError('Numer zlecenia musi mieć 12 znaków!');
         }
 
         if (!obj.name || obj.name.length > 26) {
@@ -56,11 +56,11 @@ export class BikeRecord implements SimpleBikeEntity {
                 'przecinku i nie może być wyższa niż 99999.99 zł.');
         }
 
-        if (obj.status.length > 20) {
-            throw new ValidationError('Status nie może być dłuższy niż 20 znaków');
+        if (obj.status.length > 40) {
+            throw new ValidationError('Status nie może być dłuższy niż 40 znaków');
         }
 
-        if (obj.comments.length > 65535) {
+        if (obj.comments && obj.comments.length > 65535) {
             throw new ValidationError('Komentarz może mieć maksymalnie 65,535 znaków');
         }
 
@@ -91,7 +91,12 @@ export class BikeRecord implements SimpleBikeEntity {
 
         for await (const result of results) {
             result.chat = await MessageRecord.getMessagesById(result.id);
+            if(!result.chat) {
+                result.chat = [];
+            }
         }
+
+        console.log(results);
 
         return results.map(result => new BikeRecord(result));
 
@@ -113,5 +118,25 @@ export class BikeRecord implements SimpleBikeEntity {
             throw new ValidationError('Nie istnieje zlecenie o podanym numerze');
         }
 
+    };
+
+    async insertBike(): Promise<void> {
+        if(!this.id) {
+            this.id = uuid();
+        } else {
+            throw new Error('Cannot insert something that is already inserted!')
+        }
+
+        await pool.execute("INSERT INTO `bikes` (`id`, `orderNo`, `name`, `surname`, `bikeModel`, `serialNo`, `dateOfReception`, `phoneNo`, `downPayment`, `status`, `comments`, `chat`) VALUES(:id, :orderNo, :name, :surname, :bikeModel, :serialNo, :dateOfReception, :phoneNo, :downPayment, :status, :comments, :chat)", {
+            id: this.id,
+            // ???????????
+        });
+    }
+
+    async updateStatus(status: string): Promise<void> {
+        await pool.execute("UPDATE `bikes` SET `status` = :status WHERE `id` = :id", {
+            id: this.id,
+            status,
+        });
     }
 }

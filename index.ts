@@ -4,6 +4,7 @@ import 'express-async-errors';
 import {handleError} from "./utils/errors";
 import {bikeRouter} from "./routers/bike.router";
 import {adminRouter} from "./routers/admin.router";
+import {addBikeRouter} from "./routers/addBike.router";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(json());
 //Routes...
 app.use('/bike', bikeRouter);
 app.use('/admin', adminRouter);
+app.use('/addBike', addBikeRouter);
 
 app.use(handleError);
 

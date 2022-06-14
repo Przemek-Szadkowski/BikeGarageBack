@@ -16,5 +16,5 @@ export interface SimpleBikeEntity {
     downPayment: number;
     status: string;
     comments: string;
-    chat: MessageEntity[];
+    chat: MessageEntity[] | [];
 }
