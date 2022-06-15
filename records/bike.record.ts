@@ -15,7 +15,7 @@ export class BikeRecord implements SimpleBikeEntity {
     public surname: string;
     public bikeModel: string;
     public serialNo: string;
-    public dateOfReception: object;
+    public dateOfReception: object | string;
     public phoneNo: string;
     public downPayment: number;
     public status: string;
@@ -96,8 +96,6 @@ export class BikeRecord implements SimpleBikeEntity {
             }
         }
 
-        console.log(results);
-
         return results.map(result => new BikeRecord(result));
 
     };
@@ -127,9 +125,18 @@ export class BikeRecord implements SimpleBikeEntity {
             throw new Error('Cannot insert something that is already inserted!')
         }
 
-        await pool.execute("INSERT INTO `bikes` (`id`, `orderNo`, `name`, `surname`, `bikeModel`, `serialNo`, `dateOfReception`, `phoneNo`, `downPayment`, `status`, `comments`, `chat`) VALUES(:id, :orderNo, :name, :surname, :bikeModel, :serialNo, :dateOfReception, :phoneNo, :downPayment, :status, :comments, :chat)", {
+        await pool.query("INSERT INTO `bikes` (`id`, `orderNo`, `name`, `surname`, `bikeModel`, `serialNo`, `dateOfReception`, `phoneNo`, `downPayment`, `status`, `comments`) VALUES(:id, :orderNo, :name, :surname, :bikeModel, :serialNo, :dateOfReception, :phoneNo, :downPayment, :status, :comments)", {
             id: this.id,
-            // ???????????
+            orderNo: this.orderNo,
+            name: this.name,
+            surname: this.surname,
+            bikeModel: this.bikeModel,
+            serialNo: this.serialNo,
+            dateOfReception: this.dateOfReception,
+            phoneNo: this.phoneNo,
+            downPayment: this.downPayment,
+            status: this.status,
+            comments: this.comments
         });
     }
 

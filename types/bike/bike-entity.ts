@@ -11,7 +11,7 @@ export interface SimpleBikeEntity {
     surname: string;
     bikeModel: string;
     serialNo: string;
-    dateOfReception: object;
+    dateOfReception: object | string;
     phoneNo: string;
     downPayment: number;
     status: string;
