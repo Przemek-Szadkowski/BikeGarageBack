@@ -6,4 +6,5 @@ export const pool = createPool({
     database: 'bike_garage',
     namedPlaceholders: true,
     decimalNumbers: true,
+    timezone: '+0100',
 })
