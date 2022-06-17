@@ -22,7 +22,6 @@ export const adminRouter = Router()
 
         const bikeAfterUpdate = await BikeRecord.getOneByOrderNo(bike.orderNo);
         const bikesAfterUpdate = await BikeRecord.getAllBikes();
-        console.log(bikesAfterUpdate);
 
         res.json({bikeAfterUpdate, bikesAfterUpdate});
     });

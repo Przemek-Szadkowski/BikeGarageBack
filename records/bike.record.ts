@@ -23,8 +23,8 @@ export class BikeRecord implements SimpleBikeEntity {
     public chat: MessageEntity[];
 
     constructor(obj: NewBikeEntity) {
-        if (!obj.orderNo || obj.orderNo.length > 16) {
-            throw new ValidationError('Numer zlecenia musi mieć 12 znaków!');
+        if (!obj.orderNo || obj.orderNo.length > 10) {
+            throw new ValidationError('Numer zlecenia musi mieć 10 znaków!');
         }
 
         if (!obj.name || obj.name.length > 26) {
@@ -125,7 +125,7 @@ export class BikeRecord implements SimpleBikeEntity {
             throw new Error('Cannot insert something that is already inserted!')
         }
 
-        await pool.query("INSERT INTO `bikes` (`id`, `orderNo`, `name`, `surname`, `bikeModel`, `serialNo`, `dateOfReception`, `phoneNo`, `downPayment`, `status`, `comments`) VALUES(:id, :orderNo, :name, :surname, :bikeModel, :serialNo, :dateOfReception, :phoneNo, :downPayment, :status, :comments)", {
+        await pool.execute("INSERT INTO `bikes` (`id`, `orderNo`, `name`, `surname`, `bikeModel`, `serialNo`, `dateOfReception`, `phoneNo`, `downPayment`, `status`, `comments`) VALUES(:id, :orderNo, :name, :surname, :bikeModel, :serialNo, :dateOfReception, :phoneNo, :downPayment, :status, :comments)", {
             id: this.id,
             orderNo: this.orderNo,
             name: this.name,
@@ -144,6 +144,30 @@ export class BikeRecord implements SimpleBikeEntity {
         await pool.execute("UPDATE `bikes` SET `status` = :status WHERE `id` = :id", {
             id: this.id,
             status,
+        });
+    }
+
+    async update({id, name, surname, bikeModel, serialNo, phoneNo, downPayment, status, comments} : {
+                     id: string,
+                     name: string,
+                     surname: string,
+                     bikeModel: string,
+                     serialNo: string,
+                     phoneNo: string,
+                     downPayment: number,
+                     status: string,
+                     comments: string
+    }): Promise<void> {
+        await pool.execute("UPDATE `bikes` SET `name` = :name, `surname` = :surname, `bikeModel` = :bikeModel, `serialNo` = :serialNo, `phoneNo` = :phoneNo, `downPayment` = :downPayment, `status` = :status, `comments` = :comments WHERE `id` = :id", {
+            id,
+            name,
+            surname,
+            bikeModel,
+            serialNo,
+            phoneNo,
+            downPayment,
+            status,
+            comments,
         });
     }
 }

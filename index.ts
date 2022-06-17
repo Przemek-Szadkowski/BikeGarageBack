@@ -5,6 +5,7 @@ import {handleError} from "./utils/errors";
 import {bikeRouter} from "./routers/bike.router";
 import {adminRouter} from "./routers/admin.router";
 import {addBikeRouter} from "./routers/addBike.router";
+import {editBikeRouter} from "./routers/editBike.router";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(json());
 app.use('/bike', bikeRouter);
 app.use('/admin', adminRouter);
 app.use('/addBike', addBikeRouter);
+app.use('/editBike', editBikeRouter);
 
 app.use(handleError);
 
