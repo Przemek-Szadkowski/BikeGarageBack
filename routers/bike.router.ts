@@ -24,4 +24,4 @@ export const bikeRouter = Router()
         const messages = await MessageRecord.getMessagesById(bike.id);
 
         res.json(messages);
-    })
+    });

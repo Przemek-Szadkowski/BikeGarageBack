@@ -6,6 +6,7 @@ import {bikeRouter} from "./routers/bike.router";
 import {adminRouter} from "./routers/admin.router";
 import {addBikeRouter} from "./routers/addBike.router";
 import {editBikeRouter} from "./routers/editBike.router";
+import {archiveRouter} from "./routers/archive.router";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use('/bike', bikeRouter);
 app.use('/admin', adminRouter);
 app.use('/addBike', addBikeRouter);
 app.use('/editBike', editBikeRouter);
+app.use('/archive', archiveRouter);
 
 app.use(handleError);
 

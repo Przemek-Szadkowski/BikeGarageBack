@@ -100,6 +100,20 @@ export class BikeRecord implements SimpleBikeEntity {
 
     };
 
+    static async getAllArchivedBikes(): Promise<BikeRecord[]> {
+        const [results] = (await pool.execute("SELECT * FROM `bikes_archive` ORDER BY `dateOfReception` DESC")) as BikeRecordResults;
+
+        for await (const result of results) {
+            result.chat = await MessageRecord.getMessagesById(result.id);
+            if(!result.chat) {
+                result.chat = [];
+            }
+        }
+
+        return results.map(result => new BikeRecord(result));
+
+    };
+
     static async getOneByOrderNo(orderNo: string): Promise<BikeRecord | null> {
         try {
             const [results] = await pool.execute("SELECT * FROM `bikes` WHERE orderNo = :orderNo", {
@@ -118,6 +132,11 @@ export class BikeRecord implements SimpleBikeEntity {
 
     };
 
+    static async getHowManyRecordsAreInArchive(): Promise<object> {
+        const [results] = await pool.execute("SELECT COUNT(*) AS records FROM `bikes_archive`");
+        return results;
+    }
+
     async insertBike(): Promise<void> {
         if(!this.id) {
             this.id = uuid();
@@ -126,6 +145,22 @@ export class BikeRecord implements SimpleBikeEntity {
         }
 
         await pool.execute("INSERT INTO `bikes` (`id`, `orderNo`, `name`, `surname`, `bikeModel`, `serialNo`, `dateOfReception`, `phoneNo`, `downPayment`, `status`, `comments`) VALUES(:id, :orderNo, :name, :surname, :bikeModel, :serialNo, :dateOfReception, :phoneNo, :downPayment, :status, :comments)", {
+            id: this.id,
+            orderNo: this.orderNo,
+            name: this.name,
+            surname: this.surname,
+            bikeModel: this.bikeModel,
+            serialNo: this.serialNo,
+            dateOfReception: this.dateOfReception,
+            phoneNo: this.phoneNo,
+            downPayment: this.downPayment,
+            status: this.status,
+            comments: this.comments
+        });
+    }
+
+    async insertBikeToArchive(): Promise<void> {
+        await pool.execute("INSERT INTO `bikes_archive` (`id`, `orderNo`, `name`, `surname`, `bikeModel`, `serialNo`, `dateOfReception`, `phoneNo`, `downPayment`, `status`, `comments`) VALUES(:id, :orderNo, :name, :surname, :bikeModel, :serialNo, :dateOfReception, :phoneNo, :downPayment, :status, :comments)", {
             id: this.id,
             orderNo: this.orderNo,
             name: this.name,
@@ -170,4 +205,10 @@ export class BikeRecord implements SimpleBikeEntity {
             comments,
         });
     }
+
+    async deleteAndMoveToArchive(): Promise<void> {
+        await pool.execute("DELETE FROM `bikes` WHERE `id` = :id", {
+            id: this.id,
+        });
+    };
 }
