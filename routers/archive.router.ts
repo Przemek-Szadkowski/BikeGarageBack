@@ -3,7 +3,8 @@ import {BikeRecord} from "../records/bike.record";
 
 export const archiveRouter = Router()
 
-    .get('/archive', async (req: Request, res: Response) => {
+    .get('/', async (req: Request, res: Response) => {
         const bikes = await BikeRecord.getAllArchivedBikes();
+        console.log(bikes);
         res.json(bikes);
     })
