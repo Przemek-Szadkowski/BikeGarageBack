@@ -10,6 +10,10 @@ export const adminRouter = Router()
         const rows = await BikeRecord.getHowManyRecordsAreInArchive();
         res.json([bikes, rows]);
     })
+    .get('/dashboard/update', async (req: Request, res: Response) => {
+        const bikes = await BikeRecord.getAllBikes();
+        res.json([bikes]);
+    })
     .patch('/status/:status', async (req: Request, res: Response) => {
         const {id, status} = req.body;
 

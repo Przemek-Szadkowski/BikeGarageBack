@@ -21,7 +21,13 @@ export const bikeRouter = Router()
 
         await newMessage.insertMessage(bike.id);
 
+        // turn of new message symbol when answer is send
+        if(!req.body.isClientAsk) {
+            await newMessage.changeMsg(bike.id);
+        }
+
         const messages = await MessageRecord.getMessagesById(bike.id);
+
 
         res.json(messages);
     });

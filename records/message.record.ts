@@ -45,6 +45,16 @@ export class MessageRecord implements MessageEntity {
         return results.length === 0 ? null : messages;
     }
 
+    // static async changeIsNewToFalse(id: string): Promise<void> {
+    //     await pool.execute("UPDATE `messages`.`isNew` FROM `messages` JOIN `bikes_messages` ON `messages`.`id` = `bikes_messages`.`msgId` JOIN `bikes` ON `bikes_messages`.`bikeId` = `bikes`.`id` SET `messages`.`isNew` = 0 WHERE `bikes_messages`.`bikeId` = :id");
+    // }
+
+    async changeMsg(id: string): Promise<void> {
+        await pool.execute("UPDATE `messages` JOIN `bikes_messages` ON `messages`.`id` = `bikes_messages`.`msgId` JOIN `bikes` ON `bikes_messages`.`bikeId` = `bikes`.`id` SET `messages`.`isNew` = 0 WHERE `bikes_messages`.`bikeId` = :id", {
+            id,
+        });
+    }
+
     async insertMessage(bikeId: string): Promise<void> {
         if (!this.id) {
             this.id = uuid();
