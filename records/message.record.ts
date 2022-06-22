@@ -1,12 +1,13 @@
-import {MessageEntity, NewMessageEntity} from "../types";
-import {pool} from "../utils/db";
 import {FieldPacket} from "mysql2";
-import {ValidationError} from "../utils/errors";
+import {pool} from "../utils/db";
 import {v4 as uuid} from "uuid";
+import {ValidationError} from "../utils/errors";
+import {MessageEntity, NewMessageEntity} from "../types";
 
 type MessageRecordResults = [MessageEntity[], FieldPacket[]];
 
 export class MessageRecord implements MessageEntity {
+
     public id: string;
     public text: string;
     public isClientAsk: number;
@@ -27,9 +28,11 @@ export class MessageRecord implements MessageEntity {
         this.text = obj.text;
         this.isClientAsk = obj.isClientAsk;
         this.isNew = obj.isNew;
+
     }
 
     static async getMessagesById(id: string): Promise<MessageEntity[] | null> {
+
         const [results] = await pool.execute(
             "SELECT `messages`.`id`, `messages`.`text`, `messages`.`isClientAsk`, `messages`.`isNew` FROM `messages` JOIN `bikes_messages` ON `messages`.`id` = `bikes_messages`.`msgId` JOIN `bikes` ON `bikes_messages`.`bikeId` = `bikes`.`id` WHERE `bikes_messages`.`bikeId` = :id", {
                 id,
@@ -41,31 +44,33 @@ export class MessageRecord implements MessageEntity {
             results.forEach(result => messages.push(new MessageRecord(result)));
         }
 
-
         return results.length === 0 ? null : messages;
+
     }
 
-    // static async changeIsNewToFalse(id: string): Promise<void> {
-    //     await pool.execute("UPDATE `messages`.`isNew` FROM `messages` JOIN `bikes_messages` ON `messages`.`id` = `bikes_messages`.`msgId` JOIN `bikes` ON `bikes_messages`.`bikeId` = `bikes`.`id` SET `messages`.`isNew` = 0 WHERE `bikes_messages`.`bikeId` = :id");
-    // }
+    async changeMessageStatus(id: string): Promise<void> {
 
-    async changeMsg(id: string): Promise<void> {
         await pool.execute("UPDATE `messages` JOIN `bikes_messages` ON `messages`.`id` = `bikes_messages`.`msgId` JOIN `bikes` ON `bikes_messages`.`bikeId` = `bikes`.`id` SET `messages`.`isNew` = 0 WHERE `bikes_messages`.`bikeId` = :id", {
             id,
         });
+
     }
 
     async insertMessage(bikeId: string): Promise<void> {
+
         if (!this.id) {
             this.id = uuid();
         } else {
-            throw new Error('Cannot insert something that is already inserted!');
+            throw new Error('Nie można zapisać wiadomości, która już jest zapisana');
         }
 
         await pool.execute("INSERT INTO `messages` (`id`, `text`, `isClientAsk`, `isNew`) VALUES(:id,:text,:isClientAsk,:isNew)", this);
+
         await pool.execute("INSERT INTO `bikes_messages` (`bikeId`, `msgId`) VALUES(:bikeId,:id)", {
             bikeId,
             id: this.id,
         });
+
     }
+
 }

@@ -7,6 +7,7 @@ export const addBikeRouter = Router()
 
         const bike = new BikeRecord(req.body);
 
+        // convert date to format matching to database format
         const dateString: string = bike.dateOfReception.toLocaleString();
         bike.dateOfReception = dateString.slice(0,10);
 
@@ -15,4 +16,5 @@ export const addBikeRouter = Router()
         await bike.insertBike();
 
         res.json(bike.bikeModel);
+
     });

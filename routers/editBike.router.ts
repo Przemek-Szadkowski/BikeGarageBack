@@ -15,6 +15,7 @@ export const editBikeRouter = Router()
         bike.chat = [];
 
         res.json(bike);
+
     })
     .put('/:editedBike', async (req: Request, res: Response) => {
 
@@ -26,9 +27,8 @@ export const editBikeRouter = Router()
             throw new ValidationError('Nie znaleziono roweru o podanym ID');
         }
 
-        await bike.update({
-            ...editBike,
-        });
+        await bike.update(editBike);
 
         res.json(bike.bikeModel);
+
     });
