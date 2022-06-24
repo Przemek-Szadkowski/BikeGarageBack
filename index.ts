@@ -1,4 +1,5 @@
 import express, {json} from 'express';
+import rateLimit from "express-rate-limit";
 import cors from 'cors';
 import 'express-async-errors';
 import {handleError} from "./utils/errors";
@@ -14,6 +15,10 @@ app.use(cors({
     origin: 'http://localhost:3000',
 }));
 app.use(json());
+app.use(rateLimit({
+    windowMs: 5 * 60 * 1000,
+    max: 100,
+}))
 
 //Routes...
 app.use('/bike', bikeRouter);
