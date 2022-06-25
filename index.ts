@@ -1,4 +1,4 @@
-import express, {json} from 'express';
+import express, {json, Request, Response} from 'express';
 import rateLimit from "express-rate-limit";
 import cors from 'cors';
 import 'express-async-errors';
@@ -8,6 +8,7 @@ import {adminRouter} from "./routers/admin.router";
 import {addBikeRouter} from "./routers/addBike.router";
 import {editBikeRouter} from "./routers/editBike.router";
 import {archiveRouter} from "./routers/archive.router";
+import {loginRouter} from "./routers/login.router";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(rateLimit({
 }))
 
 //Routes...
+app.use('/login', loginRouter);
 app.use('/bike', bikeRouter);
 app.use('/admin', adminRouter);
 app.use('/addBike', addBikeRouter);
