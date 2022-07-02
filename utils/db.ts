@@ -11,3 +11,7 @@ export const pool = createPool({
     timezone: '+0100',
 })
 
+// Baza danych:	bikegara_api
+// Host:	localhost
+// Nazwa użytkownika:	bikegara_api
+// Hasło:	C5cCMs4k

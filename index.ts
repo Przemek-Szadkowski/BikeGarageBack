@@ -1,4 +1,4 @@
-import express, {json} from 'express';
+import express, {json, Router} from 'express';
 import rateLimit from "express-rate-limit";
 import cors from 'cors';
 import 'express-async-errors';
@@ -21,13 +21,17 @@ app.use(rateLimit({
     max: 100,
 }))
 
+const router = Router();
+
 //Routes...
-app.use('/login', loginRouter);
-app.use('/bike', bikeRouter);
-app.use('/admin', adminRouter);
-app.use('/addBike', addBikeRouter);
-app.use('/editBike', editBikeRouter);
-app.use('/archive', archiveRouter);
+router.use('/login', loginRouter);
+router.use('/bike', bikeRouter);
+router.use('/admin', adminRouter);
+router.use('/addBike', addBikeRouter);
+router.use('/editBike', editBikeRouter);
+router.use('/archive', archiveRouter);
+
+app.use('/api', router);
 
 app.use(handleError);
 
