@@ -1,7 +1,8 @@
-import express, {json, Router} from 'express';
+import express, {json} from 'express';
 import rateLimit from "express-rate-limit";
 import cors from 'cors';
 import 'express-async-errors';
+import {config} from "./config/config";
 import {handleError} from "./utils/errors";
 import {bikeRouter} from "./routers/bike.router";
 import {adminRouter} from "./routers/admin.router";
@@ -13,7 +14,7 @@ import {loginRouter} from "./routers/login.router";
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: config.corsOrigin,
 }));
 app.use(json());
 app.use(rateLimit({
@@ -21,17 +22,13 @@ app.use(rateLimit({
     max: 100,
 }))
 
-const router = Router();
-
 //Routes...
-router.use('/login', loginRouter);
-router.use('/bike', bikeRouter);
-router.use('/admin', adminRouter);
-router.use('/addBike', addBikeRouter);
-router.use('/editBike', editBikeRouter);
-router.use('/archive', archiveRouter);
-
-app.use('/api', router);
+app.use('/login', loginRouter);
+app.use('/bike', bikeRouter);
+app.use('/admin', adminRouter);
+app.use('/addBike', addBikeRouter);
+app.use('/editBike', editBikeRouter);
+app.use('/archive', archiveRouter);
 
 app.use(handleError);
 
