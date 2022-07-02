@@ -17,10 +17,10 @@ app.use(cors({
     origin: config.corsOrigin,
 }));
 app.use(json());
-app.use(rateLimit({
-    windowMs: 35 * 60 * 1000,
-    max: 100,
-}))
+// app.use(rateLimit({
+//     windowMs: 35 * 60 * 1000,
+//     max: 100,
+// }))
 
 //Routes...
 app.use('/login', loginRouter);
