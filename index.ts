@@ -1,4 +1,4 @@
-import express, {json, Request, Response} from 'express';
+import express, {json} from 'express';
 import rateLimit from "express-rate-limit";
 import cors from 'cors';
 import 'express-async-errors';
@@ -17,7 +17,7 @@ app.use(cors({
 }));
 app.use(json());
 app.use(rateLimit({
-    windowMs: 5 * 60 * 1000,
+    windowMs: 35 * 60 * 1000,
     max: 100,
 }))
 

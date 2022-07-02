@@ -51,7 +51,7 @@ export const adminRouter = Router()
 
         await bike.insertBikeToArchive();
 
-        await bike.deleteAndMoveToArchive();
+        await bike.deleteBike();
 
         res.end();
 

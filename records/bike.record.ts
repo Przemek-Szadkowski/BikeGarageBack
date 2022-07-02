@@ -212,7 +212,7 @@ export class BikeRecord implements SimpleBikeEntity {
 
     }
 
-    async deleteAndMoveToArchive(): Promise<void> {
+    async deleteBike(): Promise<void> {
 
         await pool.execute("DELETE FROM `bikes` WHERE `id` = :id", {
             id: this.id,

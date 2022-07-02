@@ -1,8 +1,10 @@
 import {Request, Response, Router} from "express";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import {pool} from "../utils/db";
 
 export const loginRouter = Router()
+
     .post('/', async (req: Request, res: Response) => {
 
         const {username, password} = req.body.credentials;
@@ -14,9 +16,6 @@ export const loginRouter = Router()
         if(results[0].length === 0) {
             return res.status(401).json({
                 error: 'Nie znaleziono użytkownika!',
-                // na froncie ogarnąć wyświetlanie info o nieprawdiłowym użytkowniku,
-                // prawdopodobnie jakiś komponent w adminlogform któy będzie się renderował
-                // gdy przesłąny zostanie error???
             })
         }
 
@@ -24,16 +23,23 @@ export const loginRouter = Router()
 
         try {
             if (await bcrypt.compare(password, admin.password)) {
-                // tutaj token jwt i send do frontu
+
+                const token = jwt.sign(
+                {userId: admin.id},
+                'RANDOM_TOKEN_SECRET',
+                    {expiresIn: '24h'});
+
+                await res.send({
+                    token: token,
+                });
             } else {
-                // tutaj przesłać info, że hasło jest nieprawdiłowe
+                return res.status(401).json({
+                    error: 'Nieprawidłowe hasło!',
+                })
             }
         } catch {
-                // tutaj przesłać info, że wystąpił błąd
+            res.status(500).json({
+                error: 'Przepraszamy za chwilowe utrudnienia. Spróbuj ponownie za 2 minuty!',
+            })
         }
-
-        // a tego się pozbyć po dokończeniu try catch
-        await res.send({
-            token: admin.login,
-        });
     });
