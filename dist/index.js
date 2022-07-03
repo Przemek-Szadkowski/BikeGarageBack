@@ -27,9 +27,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
-const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const cors_1 = __importDefault(require("cors"));
 require("express-async-errors");
+const config_1 = require("./config/config");
 const errors_1 = require("./utils/errors");
 const bike_router_1 = require("./routers/bike.router");
 const admin_router_1 = require("./routers/admin.router");
@@ -39,13 +39,13 @@ const archive_router_1 = require("./routers/archive.router");
 const login_router_1 = require("./routers/login.router");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: 'http://localhost:3000',
+    origin: config_1.config.corsOrigin,
 }));
 app.use((0, express_1.json)());
-app.use((0, express_rate_limit_1.default)({
-    windowMs: 35 * 60 * 1000,
-    max: 100,
-}));
+// app.use(rateLimit({
+//     windowMs: 35 * 60 * 1000,
+//     max: 100,
+// }))
 //Routes...
 app.use('/login', login_router_1.loginRouter);
 app.use('/bike', bike_router_1.bikeRouter);
